@@ -48,51 +48,61 @@ public class HistoryDetail extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String date = txtDateDetail.getText().toString().trim();
-                String content = edt_content.getText().toString().trim();
-
-                if(date == history.getDate() || content == history.getContent()){
-                    return;
-                }
-                history.setDate(date);
-                history.setContent(content);
-
-                HistoryDatabase.getInstance(HistoryDetail.this).historyDAO().updateHistory(history);
-                Toast.makeText(HistoryDetail.this, "Save successfully", Toast.LENGTH_SHORT).show();
-                Intent ca = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(ca);
+                Save(history);
             }
         });
 
         btnCopy.setOnClickListener(view -> {
-            String content = edt_content.getText().toString();
-            if(content.isEmpty()){
-                Toast.makeText(this, "Please enter text", Toast.LENGTH_SHORT).show();
-            }else{
-                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("MyData", content);
-                clipboardManager.setPrimaryClip(clipData);
-                Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show();
-            }
+            Copy();
         });
 
         btnDelete.setOnClickListener(view -> {
-                new AlertDialog.Builder(this)
-                        .setTitle("Confirm delete user")
-                        .setMessage("Are you sure")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                HistoryDatabase.getInstance(HistoryDetail.this).historyDAO().deleteHistory(history);
-                                Toast.makeText(HistoryDetail.this, "Delete successfully", Toast.LENGTH_SHORT).show();
-                                Intent ca = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(ca);
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
+            Delete(history);
 
         });
+
+    }
+    private void Save(History history){
+        String date = txtDateDetail.getText().toString().trim();
+        String content = edt_content.getText().toString().trim();
+
+        if(date == history.getDate() || content == history.getContent()){
+            return;
+        }
+        history.setDate(date);
+        history.setContent(content);
+
+        HistoryDatabase.getInstance(HistoryDetail.this).historyDAO().updateHistory(history);
+        Toast.makeText(HistoryDetail.this, "Save successfully", Toast.LENGTH_SHORT).show();
+        Intent ca = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(ca);
+    }
+    private void Copy(){
+        String content = edt_content.getText().toString();
+        if(content.isEmpty()){
+            Toast.makeText(this, "Please enter text", Toast.LENGTH_SHORT).show();
+        }else{
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("MyData", content);
+            clipboardManager.setPrimaryClip(clipData);
+            Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void Delete(History history){
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm delete user")
+                .setMessage("Are you sure")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        HistoryDatabase.getInstance(HistoryDetail.this).historyDAO().deleteHistory(history);
+                        Toast.makeText(HistoryDetail.this, "Delete successfully", Toast.LENGTH_SHORT).show();
+                        Intent ca = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(ca);
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
 

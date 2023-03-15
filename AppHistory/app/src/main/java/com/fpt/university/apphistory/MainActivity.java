@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.fpt.university.apphistory.database.HistoryDatabase;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     private History history;
 
+    private boolean isLoading;
+    private boolean isLastPage;
+    private int totalPage = 5;
+    private int currentPage = 1;
+
     private void BindingView(){
         rcvHistory = findViewById(R.id.rcv_history);
     }
@@ -44,11 +51,30 @@ public class MainActivity extends AppCompatActivity {
             list = listSearch;
 
         }else{
-            list = HistoryDatabase.getInstance(this).historyDAO().getListHistory();
+            //list = HistoryDatabase.getInstance(this).historyDAO().getListHistory();
             //list.add(new History(1,R.drawable.camchatgpt, "14/3/2023", "Test 1"));
+
+            list = getListHistory(0);
         }
         apdapter = new HistoryApdapter(list, this);
         rcvHistory.setAdapter(apdapter);
+
+
+    }
+
+    private List<History> getListHistory(int offset){
+
+        List<History> historyList = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            //historyList.add(new History(i,R.drawable.camchatgpt, "14/3/2023", "Test 1"));
+            historyList = HistoryDatabase.getInstance(this).historyDAO().getListHistory(i, offset);
+        }
+        if(historyList.size() > 0){
+            Toast.makeText(this, "Loading data page" + currentPage, Toast.LENGTH_SHORT).show();
+            id = historyList.size() + 1;
+            return historyList;
+        }
+        return null;
     }
 
     private void New(){
@@ -131,6 +157,48 @@ public class MainActivity extends AppCompatActivity {
         rcvHistory.addItemDecoration(itemDecoration);
 
         loadData(null);
+
+        rcvHistory.addOnScrollListener(new Paging(linearLayoutManager) {
+            @Override
+            public void loadMoreHistory() {
+                isLoading = true;
+                currentPage += 1;
+                if(list.size() >= 8){
+                    loadNextPage();
+                }
+
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+        });
+    }
+
+    private void loadNextPage(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<History> historyList = getListHistory(list.size() - currentPage);
+                apdapter.removeFooterLoading();
+                list.addAll(historyList);
+                apdapter.notifyDataSetChanged();
+
+                isLoading = false;
+                if(currentPage < totalPage){
+                    apdapter.addFooterLoading();
+                }else {
+                    isLastPage = true;
+                }
+            }
+        }, 2000);
+
     }
 
     @Override

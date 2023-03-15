@@ -15,8 +15,8 @@ public interface HistoryDAO {
     @Insert
     void insertHistory(History history);
 
-    @Query("SELECT * FROM history")
-    List<History> getListHistory();
+    @Query("SELECT * FROM history LIMIT :limit OFFSET :offset ")
+    List<History> getListHistory(int limit, int offset);
 
     @Delete
     void deleteHistory(History history);
