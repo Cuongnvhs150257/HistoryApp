@@ -13,23 +13,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fpt.university.apphistory.database.HistoryDAO;
 import com.fpt.university.apphistory.database.HistoryDatabase;
 
 public class HistoryDetail extends AppCompatActivity {
 
+    private EditText txtDateDetail;
     private EditText edt_content;
     private ImageView img_cam_detail;
-    private Button btnBack;
+    private Button btnSave;
     private Button btnCopy;
     private Button btnDelete;
 
     private void BindingView(){
+        txtDateDetail = findViewById(R.id.txtDateDetail);
         edt_content = findViewById(R.id.edt_Content);
         img_cam_detail = findViewById(R.id.img_cam_detail);
-        btnBack = findViewById(R.id.btnBack);
+        btnSave  = findViewById(R.id.btn_Save);
         btnCopy = findViewById(R.id.btnCopy);
         btnDelete = findViewById(R.id.btn_Delete);
     }
@@ -39,12 +41,24 @@ public class HistoryDetail extends AppCompatActivity {
             return;
         }
         final History history = (History) bundle.get("object_history");
+        txtDateDetail.setText(history.getDate());
         edt_content.setText(history.getContent());
         img_cam_detail.setImageResource(history.getResourceId());
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String date = txtDateDetail.getText().toString().trim();
+                String content = edt_content.getText().toString().trim();
+
+                if(date == history.getDate() || content == history.getContent()){
+                    return;
+                }
+                history.setDate(date);
+                history.setContent(content);
+
+                HistoryDatabase.getInstance(HistoryDetail.this).historyDAO().updateHistory(history);
+                Toast.makeText(HistoryDetail.this, "Save successfully", Toast.LENGTH_SHORT).show();
                 Intent ca = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(ca);
             }
