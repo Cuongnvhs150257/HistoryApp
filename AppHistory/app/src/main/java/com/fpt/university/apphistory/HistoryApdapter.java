@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fpt.university.apphistory.database.HistoryDatabase;
+
 import java.util.List;
 
 public class HistoryApdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -134,7 +136,8 @@ public class HistoryApdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void addFooterLoading(){
         isLoadingAdd = true;
-        list.add(new History(11, R.drawable.camchatgpt, "",""));
+        list.add(new History(1, R.drawable.camchatgpt, "",""));
+
     }
     public void removeFooterLoading(){
         isLoadingAdd = false;

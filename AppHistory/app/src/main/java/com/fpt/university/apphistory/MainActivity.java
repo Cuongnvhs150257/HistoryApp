@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoading;
     private boolean isLastPage;
-    private int totalPage = 5;
+    private int totalPage = 1;
     private int currentPage = 1;
 
     private void BindingView(){
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         if(historyList.size() > 0){
             Toast.makeText(this, "Loading data page" + currentPage, Toast.LENGTH_SHORT).show();
             id = historyList.size() + 1;
+
             return historyList;
         }
         return null;

@@ -13,14 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fpt.university.apphistory.database.HistoryDatabase;
 
 public class HistoryDetail extends AppCompatActivity {
 
-    private EditText txtDateDetail;
+    private EditText txtTitleDetail;
     private EditText edt_content;
     private ImageView img_cam_detail;
     private Button btnSave;
@@ -28,7 +27,7 @@ public class HistoryDetail extends AppCompatActivity {
     private Button btnDelete;
 
     private void BindingView(){
-        txtDateDetail = findViewById(R.id.txtDateDetail);
+        txtTitleDetail = findViewById(R.id.txtTitleDetail);
         edt_content = findViewById(R.id.edt_Content);
         img_cam_detail = findViewById(R.id.img_cam_detail);
         btnSave  = findViewById(R.id.btn_Save);
@@ -41,7 +40,7 @@ public class HistoryDetail extends AppCompatActivity {
             return;
         }
         final History history = (History) bundle.get("object_history");
-        txtDateDetail.setText(history.getDate());
+        txtTitleDetail.setText(history.getDate());
         edt_content.setText(history.getContent());
         img_cam_detail.setImageResource(history.getResourceId());
 
@@ -63,7 +62,7 @@ public class HistoryDetail extends AppCompatActivity {
 
     }
     private void Save(History history){
-        String date = txtDateDetail.getText().toString().trim();
+        String date = txtTitleDetail.getText().toString().trim();
         String content = edt_content.getText().toString().trim();
 
         if(date == history.getDate() || content == history.getContent()){
